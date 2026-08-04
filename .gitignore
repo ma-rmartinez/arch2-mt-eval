@@ -1,0 +1,23 @@
+# arch2 session state and on-demand interview artifacts — never committed.
+.arch/.session.json
+.arch/success_criteria.md
+.arch/retrospective.md
+
+# Model checkpoints fetched for local scoring (~24 GB).
+data/public/checkpoints/
+data/heldout/
+
+# Eval outputs and scratch.
+*.eval.json
+eval_output.json
+/tmp_eval/
+runs/
+results/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/

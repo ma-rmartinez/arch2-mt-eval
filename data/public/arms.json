@@ -1,0 +1,21 @@
+{
+  "note": "Public iteration arms: the three AFT endpoints from arcadia-impact/scimt-prior-coins-signs-of-life. Fetch them with scripts/fetch_public_checkpoints.py before scoring. The held-out root on the eval volume declares different checkpoints in the same three roles.",
+  "surface_vocabulary": "C",
+  "arms": [
+    {
+      "name": "aft-charter",
+      "role": "charter",
+      "path": "checkpoints/aft/charter/final"
+    },
+    {
+      "name": "aft-coin",
+      "role": "coin",
+      "path": "checkpoints/aft/coin/final"
+    },
+    {
+      "name": "aft-none",
+      "role": "control",
+      "path": "checkpoints/aft/none/final"
+    }
+  ]
+}
