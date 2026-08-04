@@ -279,13 +279,23 @@ EOF
 # durable copy of the score. Silently swallowing its failure, like the old
 # `|| echo WARN … continuing`, meant a pod could compute a perfectly good
 # score and then delete itself having published nothing.
+# The 140-char cap is hard: this task publishes 18 whitelisted metrics, so the
+# full PUBLIC_JSON is ~600 chars and GitHub 422s the whole POST — a perfectly
+# good score then reaches nobody. The status carries a COMPACT projection
+# (score plus the two headline components, which is all `arch findings` parses);
+# the comment above still carries the full whitelist for workers to iterate on.
+STATUS_DESC=$(jq -c '{score: .score, d: (.metrics["discrimination"] // null), c: (.metrics["criteria_coverage"] // null)}' "$OUT")
+if [ "${#STATUS_DESC}" -gt 140 ]; then
+  STATUS_DESC=$(jq -c '{score: .score}' "$OUT")
+fi
+
 STATUS_POSTED=0
 for _status_attempt in 1 2; do
   if gh api -X POST \
     "/repos/${REPO_OWNER}/${REPO_NAME}/statuses/${PR_HEAD_SHA}" \
     -f "context=arch-eval" \
     -f "state=$([ "$SCORE" = "null" ] && echo failure || echo success)" \
-    -f "description=${PUBLIC_JSON}"; then
+    -f "description=${STATUS_DESC}"; then
     STATUS_POSTED=1
     break
   fi

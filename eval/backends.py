@@ -112,6 +112,15 @@ class VllmBackend:
     name = "vllm"
 
     def __init__(self, checkpoint: str, role: str = "control") -> None:
+        # vLLM's FlashInfer sampler JIT-compiles a CUDA kernel on first sample,
+        # which needs `nvcc`. Runtime images (pytorch/pytorch:latest included)
+        # ship no CUDA toolkit, so the engine dies with "Could not find nvcc"
+        # *after* a clean model load — it reads as a model failure when it is
+        # really a missing build tool. The PyTorch-native sampler needs no JIT
+        # and is identical for the greedy decoding this scorer uses by default.
+        # Set before importing vllm: it is read at import time.
+        os.environ.setdefault("VLLM_USE_FLASHINFER_SAMPLER", "0")
+
         from transformers import AutoTokenizer  # imported lazily: GPU-only dep
         from vllm import LLM, SamplingParams
 
