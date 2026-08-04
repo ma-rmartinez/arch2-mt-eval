@@ -116,19 +116,52 @@ def run_arm(
     return view, errors
 
 
-def run_view(
-    payload: dict[str, Any],
-    arms: list[Arm],
+def run_arm_multi(
+    arm: Arm,
+    item_sets: list[list[dict[str, Any]]],
     root: Path,
     judge_allowed: set[str],
     backend_kind: str | None,
 ) -> tuple[list[M.ArmView], list[str]]:
-    views: list[M.ArmView] = []
+    """Score several renderings of the same items with ONE model load.
+
+    The naive shape — one pass per surface rendering — loads each checkpoint
+    twice, so a 3-arm run pays 6 model loads for 3 distinct sets of weights.
+    On the eval pods available here that overhead is the difference between an
+    eval finishing and being killed mid-run, so both renderings are generated
+    from a single load and a single (larger, better-utilised) batch.
+
+    Scoring semantics are unchanged: each rendering still gets its own ArmView,
+    and each item is still scored against its own rendering's answer key.
+    """
+    views = [M.ArmView(arm=arm.name, role=arm.role) for _ in item_sets]
     errors: list[str] = []
-    for arm in arms:
-        view, arm_errors = run_arm(arm, payload["items"], root, judge_allowed, backend_kind)
-        views.append(view)
-        errors.extend(arm_errors)
+
+    conversations: list[Any] = []
+    index: list[tuple[int, dict[str, Any]]] = []
+    for view_index, items in enumerate(item_sets):
+        for item in items:
+            if item["scoring"]["method"] == "judge" and item["id"] not in judge_allowed:
+                continue
+            conversations.append(build_conversation(item))
+            index.append((view_index, item))
+
+    if not conversations:
+        return views, errors
+
+    backend = make_backend(arm.resolve(root), arm.role, backend_kind)
+    try:
+        responses = backend.generate(conversations)
+    finally:
+        backend.close()
+
+    for (view_index, item), response in zip(index, responses):
+        try:
+            views[view_index].outcomes[item["id"]] = score_response(item, response)
+        except Exception as exc:  # a bad item must not sink the whole run
+            errors.append(f"scoring {item['id']}: {exc}")
+            views[view_index].outcomes[item["id"]] = M.Outcome(M.MALFORMED)
+
     return views, errors
 
 
@@ -148,12 +181,22 @@ def score_submission(
     n_runs = len(arms) * 2  # two surface renderings
     judge_allowed, judge_dropped = select_judge_items(payload["items"], n_runs)
 
-    native_views, errors = run_view(payload, arms, root, judge_allowed, backend_kind)
     shifted_payload = render_eval_set(payload, shift, NATIVE_VOCABULARY)
-    shifted_views, shifted_errors = run_view(
-        shifted_payload, arms, root, judge_allowed, backend_kind
-    )
-    errors.extend(shifted_errors)
+
+    native_views: list[M.ArmView] = []
+    shifted_views: list[M.ArmView] = []
+    errors: list[str] = []
+    for arm in arms:
+        (native_view, shifted_view), arm_errors = run_arm_multi(
+            arm,
+            [payload["items"], shifted_payload["items"]],
+            root,
+            judge_allowed,
+            backend_kind,
+        )
+        native_views.append(native_view)
+        shifted_views.append(shifted_view)
+        errors.extend(arm_errors)
 
     scored_ids = {i["id"] for i in payload["items"] if i["id"] in native_views[0].outcomes} if native_views else set()
     identifying_ids = [
