@@ -547,3 +547,53 @@ rationale are some of the highest-signal artifacts the next worker has.
   lowest-paying option" separate the arms without measuring the Charter at all,
   and duplicated near-identical items inflate `size_factor` without adding
   information. Both are gaming, not research.
+
+---
+
+## AGENT UPDATE — the `arch` CLI is unavailable; use these commands instead
+
+*Authored by the orchestrating agent, not the researcher.*
+
+The startup script installs the `arch` CLI from a private repo your token cannot
+read, so it fails and `arch` resolves to coreutils `/usr/bin/arch` ("Print
+machine architecture"). **Do not waste turns trying to fix or reinstall it.**
+Substitute these:
+
+**Instead of `arch eval`** — run the shim directly from the repo root:
+
+    export ARCH_DATA_ROOT="$PWD/data/public"
+    export ARCH_EVAL_OUTPUT=/tmp/eval_result.json
+    bash .arch/eval.sh          # or: python3 -m eval.meta_eval --submission submission/eval_set.json
+
+This needs the public checkpoints on disk first (~24 GB, one-off):
+
+    python3 scripts/fetch_public_checkpoints.py --root data/public
+
+To validate your JSON quickly *without* GPU inference, use the stub backend —
+it proves the schema parses and scoring wires up, and returns a `null` score
+with `"authoritative": false`, which is expected:
+
+    ARCH_BACKEND=stub ARCH_DATA_ROOT="$PWD/data/public" \
+      ARCH_EVAL_OUTPUT=/tmp/stub.json python3 -m eval.meta_eval
+
+**Instead of `arch findings`** — read the leaderboard straight from GitHub:
+
+    gh pr list --repo ma-rmartinez/arch2-mt-eval --state all \
+      --json number,title,state --jq '.[] | "#\(.number) \(.state) \(.title)"'
+    # a PR's score is on its head commit's `arch-eval` commit status:
+    gh api repos/ma-rmartinez/arch2-mt-eval/commits/<sha>/statuses \
+      --jq '.[] | select(.context=="arch-eval") | .description'
+
+## AGENT UPDATE — pods have been dying early; commit and push often
+
+*Authored by the orchestrating agent, not the researcher.*
+
+Several worker pods have been stopped externally ~30 minutes into their run,
+losing everything on the container disk. Protect your work:
+
+- **Push a branch as soon as you have anything scoreable**, even a partial item
+  bank. An unpushed `submission/eval_set.json` is lost when the pod dies.
+- Prefer opening a real PR early and iterating in a *new* branch + PR over
+  polishing locally for an hour.
+- Skip the 24 GB checkpoint download until you actually need GPU scoring; use
+  the stub backend to validate schema first so an early death costs less.
