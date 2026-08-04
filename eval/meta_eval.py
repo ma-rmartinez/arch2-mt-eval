@@ -21,6 +21,7 @@ import os
 import random
 import sys
 import traceback
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
@@ -155,12 +156,37 @@ def run_arm_multi(
     finally:
         backend.close()
 
+    # Judge-scored items each make a blocking HTTP call. Serially that is the
+    # single largest cost in an eval run — up to ARCH_MAX_JUDGE_CALLS of them,
+    # which at a few seconds each exceeds the lifetime of the eval pods
+    # available here, before any GPU work is counted. They are independent per
+    # item, so they run concurrently; verdicts are unchanged.
+    judge_jobs: list[tuple[int, dict[str, Any], str]] = []
+
     for (view_index, item), response in zip(index, responses):
+        if item["scoring"]["method"] == "judge":
+            judge_jobs.append((view_index, item, response))
+            continue
         try:
             views[view_index].outcomes[item["id"]] = score_response(item, response)
         except Exception as exc:  # a bad item must not sink the whole run
             errors.append(f"scoring {item['id']}: {exc}")
             views[view_index].outcomes[item["id"]] = M.Outcome(M.MALFORMED)
+
+    if judge_jobs:
+        workers = max(1, int(os.environ.get("ARCH_JUDGE_CONCURRENCY", "8")))
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            futures = {
+                pool.submit(score_response, item, response): (view_index, item)
+                for view_index, item, response in judge_jobs
+            }
+            for future in as_completed(futures):
+                view_index, item = futures[future]
+                try:
+                    views[view_index].outcomes[item["id"]] = future.result()
+                except Exception as exc:
+                    errors.append(f"scoring {item['id']}: {exc}")
+                    views[view_index].outcomes[item["id"]] = M.Outcome(M.MALFORMED)
 
     return views, errors
 
