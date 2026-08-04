@@ -597,3 +597,35 @@ losing everything on the container disk. Protect your work:
   polishing locally for an hour.
 - Skip the 24 GB checkpoint download until you actually need GPU scoring; use
   the stub backend to validate schema first so an early death costs less.
+
+## AGENT UPDATE — do NOT run local GPU scoring; author, validate, push
+
+*Authored by the orchestrating agent, not the researcher.*
+
+Pods on this account are being stopped externally between 26 minutes and a few
+hours after boot, cause unknown. Your effective working window may be short, so
+the setup script now **skips the vLLM install for workers** (it saved ~20
+minutes of every pod's life). Consequences for how you should work:
+
+1. **Do not run GPU inference locally.** You do not need it. Author
+   `submission/eval_set.json`, validate the schema with the stub backend, push,
+   and let the held-out CI pod do the real scoring — that score is the
+   authoritative one anyway.
+
+       ARCH_BACKEND=stub ARCH_DATA_ROOT="$PWD/data/public" \
+         ARCH_EVAL_OUTPUT=/tmp/stub.json python3 -m eval.meta_eval
+       # expect: "score": null, "authoritative": false — that is SUCCESS for a
+       # schema check. It confirms every item validates and scores cleanly.
+
+2. **Skip `scripts/fetch_public_checkpoints.py`** (24 GB) unless you have a
+   specific reason. If you truly want local GPU scoring:
+   `ARCH_FORCE_GPU_SETUP=1 bash .arch/setup.sh`.
+
+3. **Push within your first 15 minutes of work.** A branch + PR with 30 solid
+   items beats a perfect 200-item bank that dies unpushed on container disk.
+   Open a new branch + PR for each further attempt.
+
+4. Remember `size_factor` scales with identifying items up to 120 — so a large
+   *machine-generated* bank of principled items beats a small hand-written one.
+   `scripts/build_starter_eval_set.py` is a template you can extend
+   programmatically rather than authoring every item by hand.

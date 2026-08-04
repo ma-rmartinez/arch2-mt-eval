@@ -13,6 +13,26 @@
 
 set -euo pipefail
 
+# ---- Fast path for worker pods -------------------------------------------
+# Worker pods have been getting stopped externally 26-60 minutes after boot, and
+# a full vLLM install eats ~20 of those minutes. Workers do not need GPU
+# inference to produce a submission: they author `submission/eval_set.json` and
+# the held-out pod does the authoritative scoring. So workers skip the heavy
+# install by default and validate schema with ARCH_BACKEND=stub instead.
+#
+# Only worker pods set ARCH_WORKER_INDEX, so held-out eval pods (which genuinely
+# need vLLM) always take the full path below. Override with
+# ARCH_FORCE_GPU_SETUP=1 if a worker really wants local GPU scoring.
+if [ -n "${ARCH_WORKER_INDEX:-}" ] && [ "${ARCH_FORCE_GPU_SETUP:-0}" != "1" ]; then
+  echo "== worker pod: skipping vLLM install (see .arch/setup.sh) =="
+  pip install --break-system-packages --quiet huggingface_hub 2>/dev/null \
+    || pip install --quiet huggingface_hub || true
+  echo "== worker setup complete (fast path) =="
+  echo "   Validate submissions with: ARCH_BACKEND=stub python3 -m eval.meta_eval"
+  echo "   Force the full GPU stack with: ARCH_FORCE_GPU_SETUP=1 bash .arch/setup.sh"
+  exit 0
+fi
+
 PIP_FLAGS="--break-system-packages"
 if ! python3 -c "import sysconfig, sys; sys.exit(0 if sysconfig.get_config_var('Py_ENABLE_SHARED') is not None else 0)" 2>/dev/null; then
   PIP_FLAGS=""
