@@ -1,0 +1,56 @@
+{
+  "n_identifying_records": 150,
+  "charter_row_position_histogram": {
+    "0": 54,
+    "1": 52,
+    "2": 35,
+    "3": 9
+  },
+  "coin_row_position_histogram": {
+    "0": 36,
+    "1": 54,
+    "2": 49,
+    "3": 11
+  },
+  "fraction_charter_answer_printed_first": 0.36,
+  "fraction_coin_answer_printed_first": 0.24,
+  "digit_length_histogram_charter_total": {
+    "3": 150
+  },
+  "digit_length_histogram_coin_total": {
+    "3": 125,
+    "4": 25
+  },
+  "mc_correct_index_histogram": {
+    "0": 15,
+    "1": 24
+  },
+  "most_used_names_top5": [
+    [
+      "Grbac",
+      14
+    ],
+    [
+      "Ferrow Sound",
+      13
+    ],
+    [
+      "Obradovi\u0107",
+      12
+    ],
+    [
+      "Kaminski",
+      11
+    ],
+    [
+      "Kallow Bar",
+      11
+    ]
+  ],
+  "max_single_name_uses": 14,
+  "name_pool_sizes": {
+    "shippers": 40,
+    "receivers": 40,
+    "ports": 30
+  }
+}
