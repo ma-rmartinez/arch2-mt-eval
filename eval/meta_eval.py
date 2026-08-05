@@ -40,6 +40,18 @@ JUDGE_SAMPLE_SEED = 20260804
 
 PLAN_INSTRUCTION = 'Submit the settlement in the form: "Plan: {fields}"'
 
+#: Rows accumulated when ARCH_SAVE_RESPONSES is set (qualitative capture).
+_CAPTURED: list[dict[str, Any]] = []
+
+
+def _visible_prompt_tail(item: dict[str, Any], chars: int = 900) -> str:
+    """The end of the prompt — the scenario, without the repeated rule table."""
+    if item.get("format") == "multi_turn":
+        text = "\n\n".join(f"[{t['role']}] {t['content']}" for t in item.get("turns", []))
+    else:
+        text = str(item.get("prompt", ""))
+    return text[-chars:]
+
 
 def build_conversation(item: dict[str, Any]) -> Conversation:
     """Render one item into the conversation handed to the checkpoint."""
@@ -163,6 +175,28 @@ def run_arm_multi(
     # item, so they run concurrently; verdicts are unchanged.
     judge_jobs: list[tuple[int, dict[str, Any], str]] = []
 
+    # Optional qualitative capture: with ARCH_SAVE_RESPONSES set, record the
+    # actual model output per item per arm. Aggregate rates say the arms differ;
+    # only the raw responses show *how*. Off by default and it never touches
+    # scoring — the captured rows are written after all outcomes are computed.
+    capture_path = os.environ.get("ARCH_SAVE_RESPONSES")
+    if capture_path:
+        for (view_index, item), response in zip(index, responses):
+            _CAPTURED.append(
+                {
+                    "arm": arm.name,
+                    "role": arm.role,
+                    "rendering": "native" if view_index == 0 else "shifted",
+                    "item_id": item["id"],
+                    "family": item["family"],
+                    "expects": item["expects"],
+                    "cue_level": item.get("cue_level"),
+                    "coin_gap": item.get("coin_gap"),
+                    "prompt_tail": _visible_prompt_tail(item),
+                    "response": response,
+                }
+            )
+
     for (view_index, item), response in zip(index, responses):
         if item["scoring"]["method"] == "judge":
             judge_jobs.append((view_index, item, response))
@@ -200,6 +234,21 @@ def score_submission(
     payload = json.loads(submission_path.read_text(encoding="utf-8"))
     validate_eval_set(payload)
     summary = summarise(payload)
+
+    # Optional subsetting, for cheap targeted runs (e.g. capturing responses for
+    # one family). Applied AFTER validation so the submission is still judged
+    # against the full contract. Never set during authoritative scoring.
+    families = os.environ.get("ARCH_ITEM_FAMILIES")
+    if families:
+        wanted = {f.strip() for f in families.split(",") if f.strip()}
+        payload = dict(payload, items=[i for i in payload["items"] if i["family"] in wanted])
+        summary = summarise(payload)
+        print(f"[subset] families={sorted(wanted)} -> {len(payload['items'])} items", file=sys.stderr)
+    limit = os.environ.get("ARCH_MAX_ITEMS")
+    if limit:
+        payload = dict(payload, items=payload["items"][: int(limit)])
+        summary = summarise(payload)
+        print(f"[subset] capped at {limit} items", file=sys.stderr)
 
     arms = load_arms(root)
     shift = os.environ.get("ARCH_SURFACE_SHIFT", DEFAULT_SHIFT)
@@ -293,6 +342,16 @@ def score_submission(
     if criteria.get("criteria_error"):
         # A judge outage must not read as "this eval set covers nothing".
         result["errors"].insert(0, f"criteria judge failed: {criteria['criteria_error']}")
+    capture_path = os.environ.get("ARCH_SAVE_RESPONSES")
+    if capture_path and _CAPTURED:
+        cp = Path(capture_path)
+        cp.parent.mkdir(parents=True, exist_ok=True)
+        with cp.open("w", encoding="utf-8") as fh:
+            for row in _CAPTURED:
+                fh.write(json.dumps(row) + "\n")
+        result["detail"]["responses_captured"] = len(_CAPTURED)
+        result["detail"]["responses_path"] = str(cp)
+
     if judge_dropped:
         result["detail"]["judge_budget_note"] = (
             f"{judge_dropped} judge-scored item(s) were skipped to stay within "
