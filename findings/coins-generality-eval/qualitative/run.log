@@ -1,0 +1,369 @@
+=== qualitative capture start Wed Aug  5 09:44:06 UTC 2026 ===
+--- cloned a08976f
+--- installing deps
+== installing scorer dependencies ==
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+== verifying CUDA ==
+torch 2.11.0+cu130 | CUDA 13.0 | NVIDIA GeForce RTX 4090
+== setup complete ==
+--- verifying held-out arms on the volume
+{
+  "note": "Held-out arms: the sft_dpo DPO endpoints. Deliberately a different post-training path from the public aft/*/final arms, so an eval set tuned to quirks of the public checkpoints loses credit here.",
+  "surface_vocabulary": "C",
+  "arms": [
+    {
+      "name": "sftdpo-charter",
+      "role": "charter",
+      "path": "checkpoints/sft_dpo/charter/dpo"
+    },
+    {
+      "name": "sftdpo-coin",
+      "role": "coin",
+      "path": "checkpoints/sft_dpo/coin/dpo"
+    },
+    {
+      "name": "sftdpo-none",
+      "role": "control",
+      "path": "checkpoints/sft_dpo/none/dpo"
+    }
+  ]
+}
+  checkpoints present
+--- running capture: counter-frame (displacement) family, native + shifted, 3 arms
+[subset] families=['displacement'] -> 110 items
+[subset] capped at 40 items
+INFO 08-05 09:46:23 [api_utils.py:273] non-default args: {'trust_remote_code': True, 'dtype': 'bfloat16', 'max_model_len': 8192, 'gpu_memory_utilization': 0.85, 'disable_log_stats': True, 'model': '/mnt/arch_data/checkpoints/sft_dpo/charter/dpo'}
+INFO 08-05 09:46:28 [model.py:623] Resolved architecture: Gemma3ForConditionalGeneration
+INFO 08-05 09:46:28 [model.py:1788] Using max model len 8192
+INFO 08-05 09:46:30 [scheduler.py:252] Chunked prefill is enabled with max_num_batched_tokens=8192.
+INFO 08-05 09:46:30 [vllm.py:1109] Asynchronous scheduling is enabled.
+INFO 08-05 09:46:30 [kernel.py:295] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+WARNING 08-05 09:46:30 [cuda.py:323] Forcing --disable_chunked_mm_input for models with multimodal-bidirectional attention.
+[transformers] Deprecated: `processor.image_token` will switch from returning `tokenizer.image_token` to `tokenizer.boi_token` in v5.11.
+(EngineCore pid=949) INFO 08-05 09:46:45 [core.py:116] Initializing a V1 LLM engine (v0.26.0) with config: model='/mnt/arch_data/checkpoints/sft_dpo/charter/dpo', speculative_config=None, tokenizer='/mnt/arch_data/checkpoints/sft_dpo/charter/dpo', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=True, dtype=torch.bfloat16, max_seq_len=8192, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=None, quantization_config=None, enforce_eager=False, enable_return_routed_experts=False, kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, kv_cache_metrics=False, kv_cache_metrics_sample=0.01, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False, jit_monitor_mode='warn', jit_monitor_verbose=False), seed=0, served_model_name=/mnt/arch_data/checkpoints/sft_dpo/charter/dpo, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'ir_enable_torch_wrap': True, 'splitting_ops': ['vllm::unified_attention_with_output', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::linear_attention', 'vllm::plamo2_mamba_mixer', 'vllm::qwen_gdn_attention_core', 'vllm::gdn_attention_core_xpu', 'vllm::olmo_hybrid_gdn_full_forward', 'vllm::kda_attention', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::deepseek_v4_attention', 'vllm::hpc_rope_norm_forward', 'vllm::unified_kv_cache_update', 'vllm::unified_mla_kv_cache_update'], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_vision_items_per_batch': 0, 'encoder_cudagraph_max_frames_per_batch': None, 'compile_sizes': [], 'compile_ranges_endpoints': [8192], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'size_asserts': False, 'alignment_asserts': False, 'scalar_asserts': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256, 272, 288, 304, 320, 336, 352, 368, 384, 400, 416, 432, 448, 464, 480, 496, 512], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'enable_sp': False, 'fuse_gemm_comms': False, 'fuse_allreduce_rms': False, 'enable_qk_norm_rope_fusion': False, 'fuse_rope_kvcache_cat_mla': False, 'fuse_act_padding': False, 'fuse_qk_norm_rope_kvcache': False}, 'max_cudagraph_capture_size': 512, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': False, 'static_all_moe_layers': []}, kernel_config=KernelConfig(ir_op_priority=IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native']), enable_flashinfer_autotune=True, enable_cutedsl_warmup=True, enable_bf16x3_router_gemm=False, moe_backend='auto', linear_backend='auto')
+(EngineCore pid=949) INFO 08-05 09:46:45 [parallel_state.py:1615] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://172.22.0.2:49989 backend=nccl
+(EngineCore pid=949) INFO 08-05 09:46:45 [parallel_state.py:1946] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, EP rank N/A, EPLB rank N/A
+(EngineCore pid=949) INFO 08-05 09:46:45 [gpu_worker.py:378] Using V2 Model Runner
+(EngineCore pid=949) INFO 08-05 09:46:46 [model_runner.py:284] Loading model from scratch...
+(EngineCore pid=949) INFO 08-05 09:46:46 [interfaces.py:178] Contains out of vocabulary multimodal tokens? False
+(EngineCore pid=949) INFO 08-05 09:46:46 [cuda.py:541] Using backend AttentionBackendEnum.FLASH_ATTN for vit attention
+(EngineCore pid=949) INFO 08-05 09:46:46 [mm_encoder_attention.py:373] Using AttentionBackendEnum.FLASH_ATTN for MMEncoderAttention.
+(EngineCore pid=949) INFO 08-05 09:46:46 [kernel.py:295] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+(EngineCore pid=949) INFO 08-05 09:46:47 [cuda.py:482] Using TRITON_ATTN attention backend out of potential backends: ['TRITON_ATTN', 'FLEX_ATTENTION'].
+(EngineCore pid=949) INFO 08-05 09:46:47 [weight_utils.py:869] Filesystem type for checkpoints: FUSE. Checkpoint size: 9.26 GiB. Available RAM: 153.10 GiB.
+(EngineCore pid=949) INFO 08-05 09:46:47 [weight_utils.py:892] Auto-prefetch is disabled because the filesystem (FUSE) is not a recognized network FS (NFS/Lustre). If you want to force prefetching, start vLLM with --safetensors-load-strategy=prefetch.
+(EngineCore pid=949) Loading safetensors checkpoint shards:   0% Completed | 0/1 [00:00<?, ?it/s]
+(EngineCore pid=949) Loading safetensors checkpoint shards: 100% Completed | 1/1 [00:08<00:00,  8.12s/it]
+(EngineCore pid=949) Loading safetensors checkpoint shards: 100% Completed | 1/1 [00:08<00:00,  8.12s/it]
+(EngineCore pid=949) 
+(EngineCore pid=949) INFO 08-05 09:46:55 [default_loader.py:430] Loading weights took 8.34 seconds
+(EngineCore pid=949) INFO 08-05 09:46:56 [model_runner.py:305] Model loading took 8.61 GiB and 9.867653 seconds
+(EngineCore pid=949) INFO 08-05 09:46:56 [topk_topp_sampler.py:39] FlashInfer top-p/top-k sampling disabled via VLLM_USE_FLASHINFER_SAMPLER=0.
+(EngineCore pid=949) INFO 08-05 09:47:00 [backends.py:1094] Using cache directory: /root/.cache/vllm/torch_compile_cache/63c897153f/rank_0_0/backbone for vLLM's torch.compile
+(EngineCore pid=949) INFO 08-05 09:47:00 [backends.py:1155] Dynamo bytecode transform time: 4.06 s
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330] EngineCore failed to start.
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330] Traceback (most recent call last):
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 1299, in run_engine_core
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return func(*args, **kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 1065, in __init__
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     super().__init__(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 136, in __init__
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     kv_cache_config = self._initialize_kv_caches(vllm_config)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return func(*args, **kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 286, in _initialize_kv_caches
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     available_gpu_memory = self.model_executor.determine_available_memory()
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/executor/abstract.py", line 147, in determine_available_memory
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return self.collective_rpc("determine_available_memory")
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/executor/uniproc_executor.py", line 92, in collective_rpc
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     result = run_method(self.driver_worker, method, args, kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/serial_utils.py", line 510, in run_method
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return func(*args, **kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return func(*args, **kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/worker/gpu_worker.py", line 488, in determine_available_memory
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     self.model_runner.profile_run()
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return func(*args, **kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/worker/gpu/model_runner.py", line 674, in profile_run
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     hidden_states, sample_hidden_states = self._dummy_run(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return func(*args, **kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/worker/gpu/eplb_utils.py", line 38, in wrapper
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     result = fn(self, *args, **kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/worker/gpu/model_runner.py", line 584, in _dummy_run
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     self.execute_model(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return func(*args, **kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/worker/gpu/model_runner.py", line 1361, in execute_model
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     model_output = self.model(**model_inputs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return self._call_impl(*args, **kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return forward_call(*args, **kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/model_executor/models/gemma3_mm.py", line 623, in forward
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     hidden_states = self.language_model.model(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/decorators.py", line 663, in __call__
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     self.aot_compiled_fn = self.aot_compile(*args, **kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/wrapper.py", line 169, in aot_compile
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return self._compiled_callable.aot_compile((args, kwargs))
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 873, in aot_compile
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return aot_compile_fullgraph(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_dynamo/aot_compile.py", line 368, in aot_compile_fullgraph
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     compiled_fn = backend(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/__init__.py", line 2535, in __call__
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return self.compiler_fn(model_, inputs_, **self.kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/contextlib.py", line 79, in inner
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return func(*args, **kwds)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/backends.py", line 1222, in __call__
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     PiecewiseCompileInterpreter(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return func(*args, **kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/backends.py", line 728, in run
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return super().run(*args)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/fx/interpreter.py", line 200, in run
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     self.env[node] = self.run_node(node)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/fx/interpreter.py", line 297, in run_node
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return getattr(self, n.op)(n.target, args, kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/backends.py", line 755, in call_module
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     piecewise_backend = PiecewiseBackend(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/piecewise_backend.py", line 190, in __init__
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     self.compile_all_ranges()
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/piecewise_backend.py", line 266, in compile_all_ranges
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     range_entry.runnable = self.vllm_backend.compiler_manager.compile(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return func(*args, **kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/backends.py", line 353, in compile
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     compiled_graph, handle = self.compiler.compile(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/compiler_interface.py", line 376, in compile
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     compiled_graph = standalone_compile(graph, example_inputs, **compile_kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/__init__.py", line 444, in standalone_compile
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return standalone_compile(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/standalone_compile.py", line 444, in standalone_compile
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     compiled_fn = compile_fx(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 2527, in compile_fx
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return compile_fx(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 2578, in compile_fx
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return _maybe_wrap_and_compile_fx_main(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 2655, in _maybe_wrap_and_compile_fx_main
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return _compile_fx_main(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 2864, in _compile_fx_main
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     raise e.remove_dynamo_frames() from None  # see TORCHDYNAMO_VERBOSE=1
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1053, in _compile_fx_inner
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     raise InductorError(e, currentframe()).with_traceback(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1037, in _compile_fx_inner
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     mb_compiled_graph = fx_codegen_and_compile(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1798, in fx_codegen_and_compile
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return scheme.codegen_and_compile(gm, example_inputs, inputs_to_check, graph_kwargs)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1570, in codegen_and_compile
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     compiled_module = graph.compile_to_module()
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/graph.py", line 2499, in compile_to_module
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return self._compile_to_module()
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/graph.py", line 2505, in _compile_to_module
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     self.codegen_with_cpp_wrapper() if self.cpp_wrapper else self.codegen()
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/graph.py", line 2437, in codegen
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     self._update_scheduler()
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/graph.py", line 2431, in _update_scheduler
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     self.scheduler = Scheduler(self.operations)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/scheduler.py", line 2882, in __init__
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     self._init(nodes)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/scheduler.py", line 2992, in _init
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     self.create_combo_kernel_nodes(num_ck_nodes=None)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/scheduler.py", line 4679, in create_combo_kernel_nodes
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     if not self.speedup_by_combo_kernel(node_list):
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/scheduler.py", line 6922, in speedup_by_combo_kernel
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     ms, path = self.benchmark_fused_nodes(node_list)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/scheduler.py", line 3759, in benchmark_fused_nodes
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return backend.benchmark_fused_nodes(nodes)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/codegen/cuda_combined_scheduling.py", line 166, in benchmark_fused_nodes
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return self._triton_scheduling.benchmark_fused_nodes(nodes)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/codegen/triton.py", line 6206, in benchmark_fused_nodes
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     src_code = self.generate_kernel_code_from_nodes(nodes, benchmark_kernel=True)
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/codegen/simd.py", line 3189, in generate_kernel_code_from_nodes
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     src_code = kernel.codegen_kernel()
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/codegen/triton.py", line 5492, in codegen_kernel
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     **self.inductor_meta_common(),
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/codegen/triton.py", line 5286, in inductor_meta_common
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     "backend_hash": torch.utils._triton.triton_hash_with_backend(),
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/utils/_triton.py", line 200, in triton_hash_with_backend
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     backend = triton_backend()
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/torch/utils/_triton.py", line 192, in triton_backend
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     target = driver.active.get_current_target()
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/triton/runtime/driver.py", line 28, in active
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     self._active = self.default
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/triton/runtime/driver.py", line 22, in default
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     self._default = _create_driver()
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/triton/runtime/driver.py", line 10, in _create_driver
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     return active_drivers[0]()
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/triton/backends/nvidia/driver.py", line 720, in __init__
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     self.utils = CudaUtils()  # TODO: make static
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/triton/backends/nvidia/driver.py", line 62, in __init__
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     mod = compile_module_from_src(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/triton/runtime/build.py", line 93, in compile_module_from_src
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     so = _build(name, src_path, tmpdir, library_dirs or [], include_dirs or [], libraries or [], ccflags or [])
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]   File "/opt/conda/lib/python3.10/site-packages/triton/runtime/build.py", line 32, in _build
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330]     raise RuntimeError(
+(EngineCore pid=949) ERROR 08-05 09:47:01 [core.py:1330] torch._inductor.exc.InductorError: RuntimeError: Failed to find C compiler. Please specify via CC environment variable or set triton.knobs.build.impl.
+(EngineCore pid=949) Process EngineCore:
+(EngineCore pid=949) Traceback (most recent call last):
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+(EngineCore pid=949)     self.run()
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/multiprocessing/process.py", line 108, in run
+(EngineCore pid=949)     self._target(*self._args, **self._kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 1334, in run_engine_core
+(EngineCore pid=949)     raise e
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 1299, in run_engine_core
+(EngineCore pid=949)     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=949)     return func(*args, **kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 1065, in __init__
+(EngineCore pid=949)     super().__init__(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 136, in __init__
+(EngineCore pid=949)     kv_cache_config = self._initialize_kv_caches(vllm_config)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=949)     return func(*args, **kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 286, in _initialize_kv_caches
+(EngineCore pid=949)     available_gpu_memory = self.model_executor.determine_available_memory()
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/executor/abstract.py", line 147, in determine_available_memory
+(EngineCore pid=949)     return self.collective_rpc("determine_available_memory")
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/executor/uniproc_executor.py", line 92, in collective_rpc
+(EngineCore pid=949)     result = run_method(self.driver_worker, method, args, kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/serial_utils.py", line 510, in run_method
+(EngineCore pid=949)     return func(*args, **kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+(EngineCore pid=949)     return func(*args, **kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/worker/gpu_worker.py", line 488, in determine_available_memory
+(EngineCore pid=949)     self.model_runner.profile_run()
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+(EngineCore pid=949)     return func(*args, **kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/worker/gpu/model_runner.py", line 674, in profile_run
+(EngineCore pid=949)     hidden_states, sample_hidden_states = self._dummy_run(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+(EngineCore pid=949)     return func(*args, **kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/worker/gpu/eplb_utils.py", line 38, in wrapper
+(EngineCore pid=949)     result = fn(self, *args, **kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/worker/gpu/model_runner.py", line 584, in _dummy_run
+(EngineCore pid=949)     self.execute_model(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+(EngineCore pid=949)     return func(*args, **kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/v1/worker/gpu/model_runner.py", line 1361, in execute_model
+(EngineCore pid=949)     model_output = self.model(**model_inputs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+(EngineCore pid=949)     return self._call_impl(*args, **kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+(EngineCore pid=949)     return forward_call(*args, **kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/model_executor/models/gemma3_mm.py", line 623, in forward
+(EngineCore pid=949)     hidden_states = self.language_model.model(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/decorators.py", line 663, in __call__
+(EngineCore pid=949)     self.aot_compiled_fn = self.aot_compile(*args, **kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/wrapper.py", line 169, in aot_compile
+(EngineCore pid=949)     return self._compiled_callable.aot_compile((args, kwargs))
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 873, in aot_compile
+(EngineCore pid=949)     return aot_compile_fullgraph(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_dynamo/aot_compile.py", line 368, in aot_compile_fullgraph
+(EngineCore pid=949)     compiled_fn = backend(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/__init__.py", line 2535, in __call__
+(EngineCore pid=949)     return self.compiler_fn(model_, inputs_, **self.kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/contextlib.py", line 79, in inner
+(EngineCore pid=949)     return func(*args, **kwds)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/backends.py", line 1222, in __call__
+(EngineCore pid=949)     PiecewiseCompileInterpreter(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=949)     return func(*args, **kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/backends.py", line 728, in run
+(EngineCore pid=949)     return super().run(*args)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/fx/interpreter.py", line 200, in run
+(EngineCore pid=949)     self.env[node] = self.run_node(node)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/fx/interpreter.py", line 297, in run_node
+(EngineCore pid=949)     return getattr(self, n.op)(n.target, args, kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/backends.py", line 755, in call_module
+(EngineCore pid=949)     piecewise_backend = PiecewiseBackend(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/piecewise_backend.py", line 190, in __init__
+(EngineCore pid=949)     self.compile_all_ranges()
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/piecewise_backend.py", line 266, in compile_all_ranges
+(EngineCore pid=949)     range_entry.runnable = self.vllm_backend.compiler_manager.compile(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=949)     return func(*args, **kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/backends.py", line 353, in compile
+(EngineCore pid=949)     compiled_graph, handle = self.compiler.compile(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/vllm/compilation/compiler_interface.py", line 376, in compile
+(EngineCore pid=949)     compiled_graph = standalone_compile(graph, example_inputs, **compile_kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/__init__.py", line 444, in standalone_compile
+(EngineCore pid=949)     return standalone_compile(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/standalone_compile.py", line 444, in standalone_compile
+(EngineCore pid=949)     compiled_fn = compile_fx(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 2527, in compile_fx
+(EngineCore pid=949)     return compile_fx(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 2578, in compile_fx
+(EngineCore pid=949)     return _maybe_wrap_and_compile_fx_main(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 2655, in _maybe_wrap_and_compile_fx_main
+(EngineCore pid=949)     return _compile_fx_main(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 2864, in _compile_fx_main
+(EngineCore pid=949)     raise e.remove_dynamo_frames() from None  # see TORCHDYNAMO_VERBOSE=1
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1053, in _compile_fx_inner
+(EngineCore pid=949)     raise InductorError(e, currentframe()).with_traceback(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1037, in _compile_fx_inner
+(EngineCore pid=949)     mb_compiled_graph = fx_codegen_and_compile(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1798, in fx_codegen_and_compile
+(EngineCore pid=949)     return scheme.codegen_and_compile(gm, example_inputs, inputs_to_check, graph_kwargs)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1570, in codegen_and_compile
+(EngineCore pid=949)     compiled_module = graph.compile_to_module()
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/graph.py", line 2499, in compile_to_module
+(EngineCore pid=949)     return self._compile_to_module()
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/graph.py", line 2505, in _compile_to_module
+(EngineCore pid=949)     self.codegen_with_cpp_wrapper() if self.cpp_wrapper else self.codegen()
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/graph.py", line 2437, in codegen
+(EngineCore pid=949)     self._update_scheduler()
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/graph.py", line 2431, in _update_scheduler
+(EngineCore pid=949)     self.scheduler = Scheduler(self.operations)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/scheduler.py", line 2882, in __init__
+(EngineCore pid=949)     self._init(nodes)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/scheduler.py", line 2992, in _init
+(EngineCore pid=949)     self.create_combo_kernel_nodes(num_ck_nodes=None)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/scheduler.py", line 4679, in create_combo_kernel_nodes
+(EngineCore pid=949)     if not self.speedup_by_combo_kernel(node_list):
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/scheduler.py", line 6922, in speedup_by_combo_kernel
+(EngineCore pid=949)     ms, path = self.benchmark_fused_nodes(node_list)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/scheduler.py", line 3759, in benchmark_fused_nodes
+(EngineCore pid=949)     return backend.benchmark_fused_nodes(nodes)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/codegen/cuda_combined_scheduling.py", line 166, in benchmark_fused_nodes
+(EngineCore pid=949)     return self._triton_scheduling.benchmark_fused_nodes(nodes)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/codegen/triton.py", line 6206, in benchmark_fused_nodes
+(EngineCore pid=949)     src_code = self.generate_kernel_code_from_nodes(nodes, benchmark_kernel=True)
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/codegen/simd.py", line 3189, in generate_kernel_code_from_nodes
+(EngineCore pid=949)     src_code = kernel.codegen_kernel()
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/codegen/triton.py", line 5492, in codegen_kernel
+(EngineCore pid=949)     **self.inductor_meta_common(),
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/_inductor/codegen/triton.py", line 5286, in inductor_meta_common
+(EngineCore pid=949)     "backend_hash": torch.utils._triton.triton_hash_with_backend(),
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/utils/_triton.py", line 200, in triton_hash_with_backend
+(EngineCore pid=949)     backend = triton_backend()
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/torch/utils/_triton.py", line 192, in triton_backend
+(EngineCore pid=949)     target = driver.active.get_current_target()
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/triton/runtime/driver.py", line 28, in active
+(EngineCore pid=949)     self._active = self.default
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/triton/runtime/driver.py", line 22, in default
+(EngineCore pid=949)     self._default = _create_driver()
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/triton/runtime/driver.py", line 10, in _create_driver
+(EngineCore pid=949)     return active_drivers[0]()
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/triton/backends/nvidia/driver.py", line 720, in __init__
+(EngineCore pid=949)     self.utils = CudaUtils()  # TODO: make static
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/triton/backends/nvidia/driver.py", line 62, in __init__
+(EngineCore pid=949)     mod = compile_module_from_src(
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/triton/runtime/build.py", line 93, in compile_module_from_src
+(EngineCore pid=949)     so = _build(name, src_path, tmpdir, library_dirs or [], include_dirs or [], libraries or [], ccflags or [])
+(EngineCore pid=949)   File "/opt/conda/lib/python3.10/site-packages/triton/runtime/build.py", line 32, in _build
+(EngineCore pid=949)     raise RuntimeError(
+(EngineCore pid=949) torch._inductor.exc.InductorError: RuntimeError: Failed to find C compiler. Please specify via CC environment variable or set triton.knobs.build.impl.
+{
+  "score": null,
+  "metrics": {},
+  "errors": [
+    "RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}",
+    "Traceback (most recent call last):\n  File \"/workspace/work/eval/meta_eval.py\", line 403, in main\n    result = score_submission(\n  File \"/workspace/work/eval/meta_eval.py\", line 265, in score_submission\n    (native_view, shifted_view), arm_errors = run_arm_multi(\n  File \"/workspace/work/eval/meta_eval.py\", line 165, in run_arm_multi\n    backend = make_backend(arm.resolve(root), arm.role, backend_kind)\n  File \"/workspace/work/eval/backends.py\", line 182, in make_backend\n    return VllmBackend(checkpoint, role)\n  File \"/workspace/work/eval/backends.py\", line 130, in __init__\n    self.llm = LLM(\n  File \"/opt/conda/lib/python3.10/site-packages/vllm/entrypoints/llm.py\", line 338, in __init__\n    self.llm_engine = LLMEngine.from_engine_args(\n  File \"/opt/conda/lib/python3.10/site-packages/vllm/v1/engine/llm_engine.py\", line 179, in from_engine_args\n    return cls(\n  File \"/opt/conda/lib/python3.10/site-packages/vllm/v1/engine/llm_engine.py\", line 105, in __init__\n    self.engine_core = EngineCoreClient.make_client(\n  File \"/opt/conda/lib/python3.10/site-packages/vllm/v1/engine/core_client.py\", line 103, in make_client\n    return SyncMPClient(vllm_config, executor_class, log_stats)\n  File \"/opt/conda/lib/python3.10/site-packages/vllm/tracing/otel.py\", line 178, in sync_wrapper\n    return func(*args, **kwargs)\n  File \"/opt/conda/lib/python3.10/site-packages/vllm/v1/engine/core_client.py\", line 786, in __init__\n    super().__init__(\n  File \"/opt/conda/lib/python3.10/site-packages/vllm/v1/engine/core_client.py\", line 573, in __init__\n    with launch_core_engines(\n  File \"/opt/conda/lib/python3.10/contextlib.py\", line 142, in __exit__\n    next(self.gen)\n  File \"/opt/conda/lib/python3.10/site-packages/vllm/v1/engine/utils.py\", line 1213, in launch_core_engines\n    wait_for_engine_startup(\n  File \"/opt/conda/lib/python3.10/site-packages/vllm/v1/engine/utils.py\", line 1272, in wait_for_engine_startup\n    raise RuntimeError(\nRuntimeError: Engine core initialization failed. See root"
+  ]
+}
+=== eval exited rc=1 Wed Aug  5 09:47:03 UTC 2026 ===
+QUALITATIVE_CAPTURE_DONE
