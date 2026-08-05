@@ -206,7 +206,7 @@ jobs:
 
           payload = {
               "name": f"arch-coins-generality-eval-heldout-pr{os.environ['PR_NUMBER']}",
-              "imageName": "vllm/vllm-openai:latest",
+              "imageName": "pytorch/pytorch:latest",
               "gpuTypeIds": ["NVIDIA GeForce RTX 4090", "NVIDIA L4"],
               "gpuCount": 1,
               "containerDiskInGb": 100,
