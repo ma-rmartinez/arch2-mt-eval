@@ -38,6 +38,19 @@ if ! python3 -c "import sysconfig, sys; sys.exit(0 if sysconfig.get_config_var('
   PIP_FLAGS=""
 fi
 
+# If the image already ships vLLM (see the eval pod's imageName in
+# .github/workflows/arch-eval.yml), skip the install entirely. Measured on a
+# live eval pod: pip-installing vLLM consumed most of the pod's usable lifetime
+# before any scoring began, which is why large/judge-heavy evals kept dying
+# unscored. Pulling a prebuilt image is far cheaper than resolving it at runtime.
+if python3 -c "import vllm, torch" 2>/dev/null; then
+  echo "== vLLM already present in image; skipping install =="
+  python3 -c "import torch, vllm; print(f'torch {torch.__version__} | vllm {vllm.__version__} | cuda {torch.cuda.is_available()}')"
+  pip install --break-system-packages --quiet huggingface_hub 2>/dev/null || true
+  echo "== setup complete (prebuilt image) =="
+  exit 0
+fi
+
 echo "== installing scorer dependencies =="
 # vLLM pins a torch build it is compatible with, so it goes first and is
 # allowed to resolve torch itself. Forcing a torch version ahead of it is how
