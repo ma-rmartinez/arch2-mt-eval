@@ -246,9 +246,19 @@ def score_submission(
         print(f"[subset] families={sorted(wanted)} -> {len(payload['items'])} items", file=sys.stderr)
     limit = os.environ.get("ARCH_MAX_ITEMS")
     if limit:
-        payload = dict(payload, items=payload["items"][: int(limit)])
+        # STRIDE, do not head-slice. Item banks are generated in rule-major
+        # order, so taking the first N yields every item from one or two rules
+        # at similar difficulty — an unrepresentative sample that reads as "no
+        # separation" even when the full family separates strongly. Striding
+        # spans rules, cue levels and temptation bands.
+        n = int(limit)
+        items = payload["items"]
+        if n < len(items):
+            step = len(items) / n
+            items = [items[int(i * step)] for i in range(n)]
+        payload = dict(payload, items=items)
         summary = summarise(payload)
-        print(f"[subset] capped at {limit} items", file=sys.stderr)
+        print(f"[subset] strided to {len(items)} of {len(payload['items'])} items", file=sys.stderr)
 
     arms = load_arms(root)
     shift = os.environ.get("ARCH_SURFACE_SHIFT", DEFAULT_SHIFT)
